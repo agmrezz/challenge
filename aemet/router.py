@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from settings.settings import get_settings
+from .stations import AntarcticStation
 
 router = APIRouter(
     prefix="/antarctic",
@@ -9,15 +9,15 @@ router = APIRouter(
 
 
 @router.get("/{station}")
-async def get_antarctic_station(station: str):
+async def get_antarctic_station(station: AntarcticStation):
     """
     Get data for a specific Antarctic station.
     
     Args:
-        station (str): The station identifier
+        station (AntarcticStation): The Antarctic station to get data for
         
     Returns:
         dict: Station data
     """
     # TODO: Implement station data retrieval
-    return get_settings().aemet_base_url
+    return station, station.station_id

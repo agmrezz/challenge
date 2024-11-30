@@ -16,3 +16,15 @@ class AntarcticStation(str, Enum):
         obj._value_ = value
         obj.station_id = station_id
         return obj
+
+
+class TimeAggregation(str, Enum):
+    H = "Hourly"
+    D = "Daily"
+    M = "Monthly"
+
+
+class PossibleFields(str, Enum):
+    TEMPERATURE = "temp"
+    PRESSURE = "pres"
+    WIND_VELOCITY = "vel"

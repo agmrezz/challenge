@@ -1,9 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+
+from settings.settings import get_settings
 
 router = APIRouter(
     prefix="/antarctic",
     tags=["antarctic"]
 )
+
 
 @router.get("/{station}")
 async def get_antarctic_station(station: str):
@@ -17,4 +20,4 @@ async def get_antarctic_station(station: str):
         dict: Station data
     """
     # TODO: Implement station data retrieval
-    raise HTTPException(status_code=501, detail="Not implemented yet")
+    return get_settings().aemet_base_url

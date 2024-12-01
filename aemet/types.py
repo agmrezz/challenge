@@ -21,9 +21,9 @@ class AntarcticStation(str, Enum):
 
 
 class TimeAggregation(str, Enum):
-    H = "Hourly"
-    D = "Daily"
-    M = "Monthly"
+    h = "Hourly"
+    d = "Daily"
+    ME = "Monthly"
 
 
 class PossibleFields(str, Enum):

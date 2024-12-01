@@ -68,6 +68,8 @@ class AEMETQueryHandler:
         df = df[["fhora", *filtered_fields]]
         if resolution:
             df = df.resample(resolution.name, on='fhora').mean(numeric_only=True)
+        else:
+            df = df.set_index("fhora")
         return df
 
     @staticmethod

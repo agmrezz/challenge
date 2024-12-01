@@ -4,7 +4,7 @@ from typing import Tuple, Annotated
 
 import pandas as pd
 import requests
-from fastapi import HTTPException, Query, Depends
+from fastapi import HTTPException, Query, Depends, Path
 from sqlmodel import Session, select
 
 from aemet.models import AEMETStationData
@@ -59,15 +59,15 @@ class AEMETQueryHandlerV2:
     def __init__(self, endpoint_url: str):
         self.url = Template(f"{get_settings().aemet_base_url}{endpoint_url}")
 
-    def __call__(self, db: DBSession,
-                 station: AntarcticStation,
+    def __call__(self, *, db: DBSession,
+                 station: str = Path(description="Station code"),
                  dates: Annotated[Tuple[datetime, datetime], Depends(validate_dates)],
                  fields: Annotated[list[PossibleFields] | None, Query()] = None,
                  resolution: Annotated[TimeAggregation | None, Query()] = None):
         start_date, end_date = dates
 
         # Get cached data and missing ranges
-        cached_df, missing_ranges = self._get_cached_data(db, station.station_id, start_date, end_date)
+        cached_df, missing_ranges = self._get_cached_data(db, station, start_date, end_date)
 
         # Fetch missing data if needed
         if missing_ranges:
@@ -75,7 +75,7 @@ class AEMETQueryHandlerV2:
             for date_range in missing_ranges:
                 df = self._fetch_from_api(station, date_range.start, date_range.end)
                 print("FETCHING", date_range.start, date_range.end)
-                self._cache_data(db, df, station.station_id)
+                self._cache_data(db, df, station)
                 dfs.append(df)
 
             # Combine all dataframes
@@ -104,7 +104,7 @@ class AEMETQueryHandlerV2:
 
         if not results:
             return pd.DataFrame(), [DateRange(start_date, end_date)]
-        
+
         # Convert results to DataFrame
         df = pd.DataFrame([{
             'fhora': r.timestamp,
@@ -149,9 +149,9 @@ class AEMETQueryHandlerV2:
             db.add(weather_data)
         db.commit()
 
-    def _fetch_from_api(self, station: AntarcticStation, start_date: datetime, end_date: datetime) -> pd.DataFrame:
+    def _fetch_from_api(self, station: str, start_date: datetime, end_date: datetime) -> pd.DataFrame:
         file_url = self.url.substitute(
-            station_id=station.station_id,
+            station_id=station,
             start_date=start_date.isoformat(),
             end_date=end_date.isoformat())
 

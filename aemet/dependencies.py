@@ -64,7 +64,7 @@ class AEMETQueryHandler:
         df = pd.DataFrame(self._handle_get_request(str(file_query_response.datos)))
 
         filtered_fields = fields if fields else [x for x in PossibleFields]
-        df["fhora"] = pd.to_datetime(df["fhora"], utc=True)
+        df["fhora"] = pd.to_datetime(df["fhora"], utc=True).dt.tz_convert('Europe/Madrid')
         df = df[["fhora", *filtered_fields]]
         if resolution:
             df = df.resample(resolution.name, on='fhora').mean(numeric_only=True)

@@ -1,5 +1,7 @@
 from enum import Enum
 
+from pydantic import BaseModel, HttpUrl
+
 
 class AntarcticStation(str, Enum):
     """
@@ -28,3 +30,10 @@ class PossibleFields(str, Enum):
     TEMPERATURE = "temp"
     PRESSURE = "pres"
     WIND_VELOCITY = "vel"
+
+
+class AEMETDateFilterResponse(BaseModel):
+    descripcion: str
+    estado: int
+    datos: HttpUrl | None = None
+    metadatos: HttpUrl | None = None

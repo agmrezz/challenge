@@ -1,3 +1,6 @@
+# Database
+*.db
+
 # PyEnv
 .python-version
 

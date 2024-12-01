@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from string import Template
 from typing import Tuple, Annotated
 
+from loguru import logger
 import pandas as pd
 import requests
 from fastapi import HTTPException, Query, Depends, Path
@@ -64,6 +65,7 @@ class AEMETQueryHandlerV2:
                  dates: Annotated[Tuple[datetime, datetime], Depends(validate_dates)],
                  fields: Annotated[list[PossibleFields] | None, Query()] = None,
                  resolution: Annotated[TimeAggregation | None, Query()] = None):
+        logger.debug(f"Fetching data for station {station} from {dates[0]} to {dates[1]}")
         start_date, end_date = dates
 
         # Get cached data and missing ranges
@@ -71,6 +73,7 @@ class AEMETQueryHandlerV2:
 
         # Fetch missing data if needed
         if missing_ranges:
+            logger.debug(f"Fetching missing data for station {station} from {dates[0]} to {dates[1]}")
             dfs = [cached_df] if not cached_df.empty else []
             for date_range in missing_ranges:
                 df = self._fetch_from_api(station, date_range.start, date_range.end)
@@ -85,6 +88,7 @@ class AEMETQueryHandlerV2:
 
         # Apply filters and aggregations
         filtered_fields = fields if fields else [x for x in PossibleFields]
+        logger.debug(f"Applying filters and aggregations for station {station} with fields {filtered_fields} and resolution {resolution}")
         df = df[["fhora", *filtered_fields]]
         df["fhora"] = pd.to_datetime(df["fhora"], utc=True).dt.tz_convert('Europe/Madrid')
         if resolution:
@@ -103,7 +107,10 @@ class AEMETQueryHandlerV2:
         results = db.exec(statement).all()
 
         if not results:
+            logger.debug(f"No cached data found for station {station_id} from {start_date} to {end_date}")
             return pd.DataFrame(), [DateRange(start_date, end_date)]
+
+        logger.debug(f"Found {len(results)} cached data for station {station_id} from {start_date} to {end_date}")
 
         # Convert results to DataFrame
         df = pd.DataFrame([{
@@ -116,14 +123,6 @@ class AEMETQueryHandlerV2:
         # Find missing ranges
         missing_ranges = []
         timestamps = [r.timestamp for r in results]
-
-        print("TIMESTAMPS", {
-            "first_available": timestamps[0].isoformat(),
-            "start_date": start_date.isoformat(),
-            "last_available": timestamps[-1].isoformat(),
-            "end_date": end_date.isoformat()
-        })
-
         # Check start gap
         if timestamps[0] > start_date:
             # API returns data every 10 minutes, so we need to get the previous 10 minutes
@@ -135,9 +134,12 @@ class AEMETQueryHandlerV2:
             next_date = timestamps[-1] + timedelta(minutes=10)
             missing_ranges.append(DateRange(next_date, end_date))
 
+        logger.debug(f"Found {missing_ranges} missing ranges for station {station_id} from {start_date} to {end_date}")
+
         return df, missing_ranges
 
     def _cache_data(self, db: Session, df: pd.DataFrame, station_id: str):
+        logger.debug(f"Caching data for station {station_id} from {df.index[0]} to {df.index[-1]}")
         for _, row in df.iterrows():
             weather_data = AEMETStationData(
                 station_code=station_id,
@@ -150,6 +152,7 @@ class AEMETQueryHandlerV2:
         db.commit()
 
     def _fetch_from_api(self, station: str, start_date: datetime, end_date: datetime) -> pd.DataFrame:
+        logger.debug(f"Fetching data for station {station} from {start_date} to {end_date}")
         file_url = self.url.substitute(
             station_id=station,
             start_date=start_date.isoformat(),
@@ -163,6 +166,7 @@ class AEMETQueryHandlerV2:
     @staticmethod
     def _handle_get_request(url: str):
         try:
+            logger.debug(f"Fetching data from {url}")
             response = requests.get(url, headers={"api_key": get_settings().aemet_jwt})
             data = response.json()
 
@@ -173,12 +177,15 @@ class AEMETQueryHandlerV2:
             description = data.get("descripcion") if "descripcion" in data else None
 
             if 400 <= status_code <= 599:
+                logger.error(f"Aemet api returned status code {status_code} with description {description}")
                 raise HTTPException(status_code=status_code, detail=description)
             if not status_code:
+                logger.error("Aemet api returned no status code")
                 raise HTTPException(status_code=404, detail="No data found")
 
             return data
         except Exception as e:
+            logger.error(f"Aemet api return an error: {e}")
             raise HTTPException(status_code=500, detail=f"Aemet api return an error: {e}")
 
 

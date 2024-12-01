@@ -73,11 +73,16 @@ class AEMETQueryHandlerV2:
 
         # Fetch missing data if needed
         if missing_ranges:
+            # Flatten the list of split ranges
+            split_ranges = [
+                date_range
+                for range in missing_ranges
+                for date_range in self._split_date_range(range.start, range.end)
+            ]
             logger.debug(f"Fetching missing data for station {station} from {dates[0]} to {dates[1]}")
             dfs = [cached_df] if not cached_df.empty else []
-            for date_range in missing_ranges:
+            for date_range in split_ranges:
                 df = self._fetch_from_api(station, date_range.start, date_range.end)
-                print("FETCHING", date_range.start, date_range.end)
                 self._cache_data(db, df, station)
                 dfs.append(df)
 
@@ -137,6 +142,23 @@ class AEMETQueryHandlerV2:
         logger.debug(f"Found {missing_ranges} missing ranges for station {station_id} from {start_date} to {end_date}")
 
         return df, missing_ranges
+
+    def _split_date_range(self, start_date: datetime, end_date: datetime) -> list[DateRange]:
+        """Split a date range into chunks of maximum 30 days."""
+        ranges = []
+        current_start = start_date
+        
+        while current_start < end_date:
+            # Calculate the next end date (30 days or less)
+            next_end = min(
+                current_start + timedelta(days=30),
+                end_date
+            )
+            
+            ranges.append(DateRange(current_start, next_end))
+            current_start = next_end + timedelta(minutes=10)  # Add 10 minutes to avoid overlap
+    
+        return ranges
 
     def _cache_data(self, db: Session, df: pd.DataFrame, station_id: str):
         logger.debug(f"Caching data for station {station_id} from {df.index[0]} to {df.index[-1]}")

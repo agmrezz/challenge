@@ -4,14 +4,17 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "ultracite lint",
+    "format": "ultracite format",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.0.5",
+    "husky": "^9.1.7",
     "prettier": "^3.6.0",
     "turbo": "^2.5.4",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "ultracite": "5.0.26"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

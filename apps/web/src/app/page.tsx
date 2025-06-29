@@ -1,4 +1,3 @@
-import { Button } from "@repo/ui/components/ui/button";
 import Image from "next/image";
 
 export default function Home() {
@@ -13,7 +12,6 @@ export default function Home() {
           src="/next.svg"
           width={180}
         />
-        <Button>sad</Button>
         <ol className="list-inside list-decimal text-center font-[family-name:var(--font-geist-mono)] text-sm/6 sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}

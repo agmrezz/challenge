@@ -1,3 +1,5 @@
-export default function IncidentsPage() {
-  return <div>Incidents</div>;
+import IncidentsPage from "@/features/incidents/indicents-page";
+
+export default function Page() {
+  return <IncidentsPage />;
 }

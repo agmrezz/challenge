@@ -1,8 +1,26 @@
+"use client";
 import { Separator } from "@repo/ui/components/ui/separator";
 import { SidebarTrigger } from "@repo/ui/components/ui/sidebar";
+import { useQuery } from "@tanstack/react-query";
 import { NewIncidentDialog } from "./new-incident-dialog";
+import { getIncidents } from "./requests";
+import { columns } from "./table/columns";
+import { DataTable } from "./table/incidents-table";
 
 export default function IncidentsPage() {
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["incidents"],
+    queryFn: () => getIncidents(),
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
+
   return (
     <div>
       <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b p-3 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -16,6 +34,7 @@ export default function IncidentsPage() {
         </div>
         <NewIncidentDialog />
       </header>
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }

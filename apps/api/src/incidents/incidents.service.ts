@@ -18,7 +18,7 @@ export class IncidentsService {
   }
 
   findAll() {
-    return 'This action returns all incidents';
+    return this.prisma.incident.findMany();
   }
 
   update(id: number, updateIncidentDto: UpdateIncidentDto) {

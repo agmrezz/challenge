@@ -5,6 +5,7 @@
     "rules": {
       "style": {
         "noParameterProperties": "off",
+        "useImportType": "off",
       },
     },
   },

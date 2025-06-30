@@ -1,4 +1,12 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateIncidentDto } from "./create-incident.dto";
+import { IncidentStatus } from '@repo/database';
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
-export class UpdateIncidentDto extends PartialType(CreateIncidentDto) {}
+export class UpdateIncidentDto {
+  @IsOptional()
+  @IsEnum(IncidentStatus)
+  status?: IncidentStatus;
+
+  @IsOptional()
+  @IsUUID()
+  assignedToId?: string | null;
+}

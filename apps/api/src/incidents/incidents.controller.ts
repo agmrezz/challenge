@@ -1,15 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { IncidentsService } from './incidents.service';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import type { CreateIncidentDto } from './dto/create-incident.dto';
 import type { UpdateIncidentDto } from './dto/update-incident.dto';
+import { IncidentsService } from './incidents.service';
 
 @Controller('incidents')
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @Post()
-  create() {
-    return this.incidentsService.create();
+  create(@Body() createIncidentDto: CreateIncidentDto) {
+    return this.incidentsService.create(createIncidentDto);
   }
 
   @Get()
@@ -18,9 +18,10 @@ export class IncidentsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIncidentDto: UpdateIncidentDto) {
-    return this.incidentsService.update(+id, updateIncidentDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateIncidentDto: UpdateIncidentDto
+  ) {
+    return this.incidentsService.update(id, updateIncidentDto);
   }
-
- 
 }

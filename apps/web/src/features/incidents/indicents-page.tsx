@@ -1,4 +1,3 @@
-"use client";
 import { Separator } from "@repo/ui/components/ui/separator";
 import { SidebarTrigger } from "@repo/ui/components/ui/sidebar";
 import { NewIncidentDialog } from "./new-incident-dialog";
@@ -15,11 +14,7 @@ export default function IncidentsPage() {
           />
           <h1 className="font-mediumd text-base">Incidents</h1>
         </div>
-        <NewIncidentDialog
-          handleSubmit={() => {
-            console.log("submit");
-          }}
-        />
+        <NewIncidentDialog />
       </header>
     </div>
   );

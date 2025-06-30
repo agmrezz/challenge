@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -28,11 +29,20 @@ import z from "zod/v4";
 const formSchema = z.object({
   title: z.string().min(1),
 });
-export function NewIncidentDialog({
-  handleSubmit,
-}: {
-  handleSubmit: (name: string) => void;
-}) {
+
+async function createIncident(title: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/incidents`, {
+    method: "PUT",
+    body: JSON.stringify({ title }),
+  });
+  return res.json();
+}
+
+export function NewIncidentDialog() {
+  const mutation = useMutation({
+    mutationFn: createIncident,
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,7 +51,7 @@ export function NewIncidentDialog({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    handleSubmit(values.title);
+    mutation.mutate(values.title);
   }
 
   return (

@@ -23,20 +23,12 @@ import { Input } from "@repo/ui/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-
 import z from "zod/v4";
+import { createIncident } from "./requests";
 
 const formSchema = z.object({
   title: z.string().min(1),
 });
-
-async function createIncident(title: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/incidents`, {
-    method: "PUT",
-    body: JSON.stringify({ title }),
-  });
-  return res.json();
-}
 
 export function NewIncidentDialog() {
   const mutation = useMutation({

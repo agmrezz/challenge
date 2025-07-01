@@ -13,3 +13,13 @@ export const incidentSchema = z.object({
 export const incidentsSchema = z.array(incidentSchema);
 
 export type Incident = z.infer<typeof incidentSchema>;
+
+export const updateStatusSchema = incidentSchema
+  .pick({
+    id: true,
+    status: true,
+    assignedToId: true,
+  })
+  .partial();
+
+export type UpdateStatus = z.infer<typeof updateStatusSchema>;

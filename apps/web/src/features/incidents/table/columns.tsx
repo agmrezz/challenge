@@ -15,29 +15,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
+import { useMutation } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
-import type { z } from "zod";
-import { type Incident, incidentSchema } from "../schemas";
-
-const updateStatusSchema = incidentSchema.pick({ status: true });
+import { updateIncident } from "../requests";
+import { type Incident, incidentSchema, UpdateStatus } from "../schemas";
 
 function SelectStatus({ incident }: { incident: Incident }) {
-  const form = useForm<z.infer<typeof updateStatusSchema>>({
+  const mutation = useMutation({
+    mutationFn: updateIncident,
+  });
+
+  const form = useForm<UpdateStatus>({
     defaultValues: {
       status: incident.status,
     },
   });
 
-  async function onSubmit(data: z.infer<typeof updateStatusSchema>) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/incidents/${incident.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  function onSubmit(data: UpdateStatus) {
+    mutation.mutate({ ...data, id: incident.id });
   }
 
   return (

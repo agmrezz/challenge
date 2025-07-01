@@ -1,6 +1,14 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
+import { LoginDto } from './auth/dto/login-dto';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 
 @Controller()
@@ -17,9 +25,10 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  login(@Request() req: any) {
-    return this.authService.login(req.user);
+  login(@Body() loginDto: LoginDto) {
+    console.log('login', loginDto.username);
+    console.log('login', loginDto.password);
+    return this.authService.login(loginDto);
   }
 
   @UseGuards(LocalAuthGuard)

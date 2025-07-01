@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { IncidentsModule } from './incidents/incidents.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
 
@@ -15,6 +16,7 @@ import { UsersService } from './users/users.service';
     IncidentsModule,
     AuthModule,
     UsersModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService, UsersService],

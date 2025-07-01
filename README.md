@@ -1,135 +1,92 @@
-# Turborepo starter
+# Logixs Challenge - Incident Management System
 
-This Turborepo starter is maintained by the Turborepo core team.
+This is a full-stack incident management system built with modern web technologies. It allows users to track and manage incidents, assign them to users, and monitor their status.
 
-## Using this example
+## Tech Stack
 
-Run the following command:
+- **Monorepo:** PNPM Workspaces & Turborepo
+- **Frameworks:** Next.js (Web), NestJS (API)
+- **Database:** PostgreSQL & Prisma
+- **UI:** React, Tailwind CSS, shadcn/ui
+- **Languages:** TypeScript
+- **Containerization:** Docker & Docker Compose
+- **Linting/Formatting:** Biome
 
-```sh
-npx create-turbo@latest
-```
+## Project Structure
 
-## What's inside?
+This repository is a monorepo managed by PNPM and Turborepo.
 
-This Turborepo includes the following packages/apps:
+- `apps/api`: The NestJS backend application. It handles business logic, database interactions, and authentication.
+- `apps/web`: The Next.js frontend application. It provides the user interface for interacting with the system.
+- `packages/database`: Contains the Prisma schema, client, and migrations.
+- `packages/ui`: A shared React component library based on shadcn/ui.
+- `packages/typescript-config`: Shared TypeScript configurations for the workspace.
 
-### Apps and Packages
+## Getting Started
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+Follow these instructions to get the project up and running on your local machine.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Prerequisites
 
-### Utilities
+- [Node.js](https://nodejs.org/en/) (v18 or newer)
+- [pnpm](https://pnpm.io/installation)
+- [Docker](https://www.docker.com/get-started) and Docker Compose
 
-This Turborepo has some additional tools already setup for you:
+### Installation
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+1.  **Clone the repository:**
 
-### Build
+    ```bash
+    git clone https://github.com/your-username/logixs-challenge.git
+    cd logixs-challenge
+    ```
 
-To build all apps and packages, run the following command:
+2.  **Install dependencies:**
 
-```
-cd my-turborepo
+    ```bash
+    pnpm install
+    ```
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+3.  **Set up environment variables:**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+    The API service requires a `DATABASE_URL`. Prisma uses this to connect to the database. Create a `.env` file in the `apps/api` directory:
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+    `apps/api/.env`:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+    ```
+    DATABASE_URL="postgresql://user:password@localhost:5432/logixsdb?schema=public"
+    ```
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+    The `compose.yaml` file sets up the PostgreSQL container with these credentials by default.
 
-### Develop
+### Running the Application
 
-To develop all apps and packages, run the following command:
+1.  **Start the database:**
+    Use Docker Compose to start the PostgreSQL database container.
 
-```
-cd my-turborepo
+    ```bash
+    docker-compose up -d postgres
+    ```
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+2.  **Run database migrations:**
+    Apply the Prisma schema to the database.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+    ```bash
+    pnpm --filter database prisma migrate dev
+    ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+3.  **Run the development servers:**
+    This command uses Turborepo to start the `api` and `web` applications in development mode.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+    ```bash
+    pnpm dev
+    ```
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+    - Web application will be available at [http://localhost:3000](http://localhost:3000)
+    - API will be available at [http://localhost:3001](http://localhost:3001)
 
-### Remote Caching
+## Environment Variables
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+- `DATABASE_URL`: The connection string for the PostgreSQL database. This is required by the `api` service.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+  Example: `DATABASE_URL="postgresql://user:password@localhost:5432/logixsdb?schema=public"`

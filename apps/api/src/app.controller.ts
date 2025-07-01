@@ -26,8 +26,6 @@ export class AppController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   login(@Body() loginDto: LoginDto) {
-    console.log('login', loginDto.username);
-    console.log('login', loginDto.password);
     return this.authService.login(loginDto);
   }
 

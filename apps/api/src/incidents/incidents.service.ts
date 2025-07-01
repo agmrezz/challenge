@@ -14,7 +14,15 @@ export class IncidentsService {
   }
 
   findAll() {
-    return this.prisma.incident.findMany();
+    return this.prisma.incident.findMany({
+      include: {
+        assignedTo: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   update(id: string, updateIncidentDto: UpdateIncidentDto) {

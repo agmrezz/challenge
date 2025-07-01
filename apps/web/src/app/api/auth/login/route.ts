@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       cookieStore.set('access_token', `Bearer ${res.data.access_token}`, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24, // 1 day
+        maxAge: 60 * 60, // 1 hour
       });
       return NextResponse.json(res.data);
     }

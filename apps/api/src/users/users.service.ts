@@ -15,4 +15,8 @@ export class UsersService {
       })) ?? undefined
     );
   }
+
+  async findAll(): Promise<User[]> {
+    return await this.prisma.user.findMany();
+  }
 }

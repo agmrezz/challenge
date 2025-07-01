@@ -8,7 +8,7 @@ import { columns } from "./table/columns";
 import { DataTable } from "./table/incidents-table";
 
 export default function IncidentsPage() {
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError, error } = useQuery({
     queryKey: ["incidents"],
     queryFn: () => getIncidents(),
   });
@@ -18,7 +18,7 @@ export default function IncidentsPage() {
   }
 
   if (isError) {
-    return <div>Error</div>;
+    return <div>{error.message}</div>;
   }
 
   return (

@@ -1,5 +1,5 @@
 import { zodFetch } from '@/zodFetch';
-import { incidentsSchema, UpdateStatus } from './schemas';
+import { incidentsSchema, UpdateStatus, usersSchema } from './schemas';
 
 export async function getIncidents() {
   const res = await zodFetch(
@@ -15,6 +15,22 @@ export async function getIncidents() {
   }
 
   throw new Error('Failed to fetch incidents');
+}
+
+export async function getUsers() {
+  const res = await zodFetch(
+    usersSchema,
+    `${process.env.NEXT_PUBLIC_API_URL}/users`,
+    {
+      credentials: 'include',
+    }
+  );
+
+  if (res.ok && res.data) {
+    return res.data;
+  }
+
+  throw new Error('Failed to fetch users');
 }
 
 export async function createIncident(title: string) {

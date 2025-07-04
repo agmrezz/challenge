@@ -3,23 +3,20 @@ import { Separator } from "@repo/ui/components/ui/separator";
 import { SidebarTrigger } from "@repo/ui/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { NewIncidentDialog } from "./new-incident-dialog";
-import { getIncidents } from "./requests";
+import { getIncidents, getUsers } from "./requests";
 import { columns } from "./table/columns";
 import { DataTable } from "./table/incidents-table";
 
 export default function IncidentsPage() {
-  const { data, isPending, isError, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ["incidents"],
     queryFn: () => getIncidents(),
   });
 
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>{error.message}</div>;
-  }
+  const { data: users } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers(),
+  });
 
   return (
     <div>
@@ -34,7 +31,9 @@ export default function IncidentsPage() {
         </div>
         <NewIncidentDialog />
       </header>
-      <DataTable columns={columns} data={data} />
+      <div className="p-4">
+        <DataTable columns={columns} data={data || []} users={users || []} />
+      </div>
     </div>
   );
 }

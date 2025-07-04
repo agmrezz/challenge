@@ -14,14 +14,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { updateIncident } from "../requests";
 import { type Incident, incidentSchema, UpdateStatus } from "../schemas";
 
 export function SelectStatus({ incident }: { incident: Incident }) {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: updateIncident,
+    onMutate: async (newIncident) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["incidents"] });
+
+      // Snapshot the previous value
+      const previousIncidents = queryClient.getQueryData(["incidents"]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["incidents"], (old: Incident[] | undefined) => {
+        if (!old) {
+          return old;
+        }
+        return old.map((inc) => {
+          return inc.id === newIncident.id
+            ? { ...inc, status: newIncident.status }
+            : inc;
+        });
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousIncidents };
+    },
+    onError: (_err, _newIncident, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData(["incidents"], context?.previousIncidents);
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure we have the latest data
+      queryClient.invalidateQueries({ queryKey: ["incidents"] });
+    },
   });
 
   const form = useForm<UpdateStatus>({

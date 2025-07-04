@@ -46,5 +46,13 @@ export const columns: ColumnDef<Incident>[] = [
     accessorKey: "assignedToId",
     header: "Assigned To",
     cell: ({ row }) => <SelectUser incident={row.original} />,
+    filterFn: (row, id, value) => {
+      if (value === null) {
+        // Filter for unassigned (null or undefined assignedToId)
+        return row.getValue(id) === null || row.getValue(id) === undefined;
+      }
+      // Default behavior for specific user IDs
+      return row.getValue(id) === value;
+    },
   },
 ];

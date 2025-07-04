@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod/v4";
@@ -31,8 +31,13 @@ const formSchema = z.object({
 });
 
 export function NewIncidentDialog() {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: createIncident,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["incidents"] });
+    },
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

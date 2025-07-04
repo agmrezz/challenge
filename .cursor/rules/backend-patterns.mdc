@@ -1,0 +1,57 @@
+# NestJS Backend Patterns
+
+## Module Architecture
+
+- Follow feature-based module organization (auth, incidents, users)
+- Each module should have its own controller, service, and DTOs
+- Use barrel exports for clean imports
+
+## Authentication & Authorization
+
+- JWT-based authentication with passport strategies
+- Local strategy for username/password login
+- JWT strategy for protected routes
+- Use guards to protect endpoints: `@UseGuards(JwtAuthGuard)`
+
+## Service Layer Patterns
+
+- Services handle business logic and database operations
+- Inject PrismaService for database access
+- Use proper error handling with NestJS exceptions
+- Return consistent response formats
+
+## Controller Best Practices
+
+- Keep controllers thin - delegate to services
+- Use proper HTTP status codes
+- Implement validation with DTOs and class-validator
+- Use decorators for authentication and authorization
+
+## Database Integration
+
+- Use Prisma ORM through PrismaService
+- Implement proper transaction handling
+- Use select queries to avoid over-fetching
+- Handle database errors gracefully
+
+## File Structure Example
+
+```
+src/
+├── auth/
+│   ├── auth.module.ts
+│   ├── auth.service.ts
+│   ├── guards/
+│   └── strategies/
+├── incidents/
+│   ├── incidents.controller.ts
+│   ├── incidents.service.ts
+│   ├── dto/
+│   └── entities/
+```
+
+description:
+globs:
+alwaysApply: false
+
+---

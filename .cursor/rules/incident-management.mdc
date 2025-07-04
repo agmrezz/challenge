@@ -1,0 +1,70 @@
+# Incident Management System
+
+## Core Features
+
+### Incident Lifecycle
+
+- **Creation** - Users can create new incidents with title, description, and priority
+- **Assignment** - Incidents can be assigned to users (self-assignment or reassignment)
+- **Status Management** - Toggle between OPEN and CLOSED states
+- **Tracking** - Maintain creation and update timestamps
+
+### Filtering and Pagination
+
+- **Status Filter** - Filter by Open or Closed incidents
+- **Assignment Filter** - Show unassigned, assigned to me, or assigned to others
+- **Pagination** - Handle large datasets with proper pagination controls
+- **Search** - Allow searching by title or description
+
+### Table Display
+
+Required columns for incident table:
+
+- **Creation Date** - When the incident was first reported
+- **Title** - Brief description of the incident
+- **Status** - Current state (OPEN/CLOSED)
+- **Assigned Person** - Who is responsible for the incident
+- **Priority** - Urgency level (LOW, MEDIUM, HIGH, CRITICAL)
+
+## Business Rules
+
+### Assignment Logic
+
+- Users can assign incidents to themselves
+- Users can reassign incidents from others to themselves
+- Unassigned incidents can be claimed by any user
+- Assignment changes should be tracked with timestamps
+
+### Status Management
+
+- Only assigned users should be able to close incidents
+- Reopening closed incidents should be allowed
+- Status changes should update the `updatedAt` timestamp
+
+### Priority System
+
+- Use enum values: LOW, MEDIUM, HIGH, CRITICAL
+- Priority affects display order and filtering
+- Critical incidents should be highlighted in the UI
+
+## API Endpoints Structure
+
+```
+GET /incidents - List incidents with filtering and pagination
+POST /incidents - Create new incident
+PATCH /incidents/:id - Update incident (status, assignment)
+GET /incidents/:id - Get incident details
+```
+
+## Frontend Components
+
+- **IncidentsTable** - Main table with sorting and filtering
+- **NewIncidentDialog** - Modal for creating incidents
+- **StatusSelect** - Dropdown for status changes
+- **UserSelect** - Dropdown for assignment changes
+- **FilterControls** - Status and assignment filters
+  description:
+  globs:
+  alwaysApply: false
+
+---

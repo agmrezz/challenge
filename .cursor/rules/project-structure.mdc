@@ -1,0 +1,50 @@
+# Project Structure Guide
+
+This is a monorepo incident management platform built with modern web technologies. The project follows a clean architecture pattern with clear separation of concerns.
+
+## Monorepo Structure
+
+### Applications (`apps/`)
+
+- **`apps/api/`** - NestJS backend API with JWT authentication and incident management
+- **`apps/web/`** - Next.js frontend with server-side rendering and modern UI
+
+### Shared Packages (`packages/`)
+
+- **`packages/database/`** - Prisma ORM setup with PostgreSQL schema and migrations
+- **`packages/ui/`** - Shared UI components built with shadcn/ui and Tailwind CSS
+- **`packages/typescript-config/`** - Shared TypeScript configurations for consistency
+
+## Key Architecture Patterns
+
+### Backend (NestJS)
+
+- Modular architecture with feature-based modules
+- JWT authentication with guards and strategies
+- Prisma ORM for database operations
+- RESTful API design with proper DTOs
+
+### Frontend (Next.js)
+
+- App Router with route groups for public/private pages
+- Server-side rendering with React Query for data fetching
+- Form validation with Zod schemas
+- Responsive design with Tailwind CSS
+
+### Database
+
+- PostgreSQL with Prisma ORM
+- Migration-based schema management
+- Proper indexing and relationships
+
+## Development Workflow
+
+- Use pnpm for package management
+- Docker Compose for local development
+- Turbo for build orchestration
+- Biome for code formatting and linting
+  description:
+  globs:
+  alwaysApply: false
+
+---

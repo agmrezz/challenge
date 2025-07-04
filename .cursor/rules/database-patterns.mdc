@@ -1,0 +1,80 @@
+# Database Patterns with Prisma
+
+## Schema Design
+
+- Use proper PostgreSQL types and constraints
+- Implement proper relationships between entities
+- Add indexes for frequently queried fields
+- Use enums for status fields (OPEN, CLOSED, etc.)
+
+## Prisma Best Practices
+
+- Generate client after schema changes: `pnpm db:generate`
+- Use migrations for schema changes: `pnpm db:migrate`
+- Implement proper seeding for development data
+- Use select queries to avoid over-fetching
+
+## Entity Relationships
+
+- **Users** - Store user credentials and profile information
+- **Incidents** - Core entity with title, description, status, priority
+- **User-Incident** - Many-to-many relationship for assignments
+
+## Query Patterns
+
+- Use `include` for related data fetching
+- Implement pagination with `skip` and `take`
+- Use `where` clauses for filtering
+- Handle null values properly in queries
+
+## Migration Strategy
+
+- Create descriptive migration names
+- Test migrations in development first
+- Use proper rollback strategies
+- Keep migrations atomic and reversible
+
+## Development Workflow
+
+```bash
+# Generate Prisma client
+pnpm db:generate
+
+# Create and apply migration
+pnpm db:migrate
+
+# Reset database (development only)
+pnpm db:reset
+
+# Seed database
+pnpm db:seed
+```
+
+## Example Schema Structure
+
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  incidents Incident[]
+}
+
+model Incident {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      Status   @default(OPEN)
+  priority    Priority @default(MEDIUM)
+  assignedTo  User?    @relation(fields: [assignedToId], references: [id])
+  assignedToId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+```
+
+description:
+globs:
+alwaysApply: false
+
+---

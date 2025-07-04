@@ -1,0 +1,63 @@
+# Next.js Frontend Patterns
+
+## App Router Structure
+
+- Use route groups for organizing pages: `(public)` and `(private)`
+- Implement proper layout hierarchy with shared layouts
+- Use loading.tsx and error.tsx for better UX
+
+## Authentication Flow
+
+- Implement login form with proper validation using Zod schemas
+- Use JWT tokens for API authentication
+- Protect private routes with middleware or layout checks
+- Store auth state properly (consider using React Query or similar)
+
+## Data Fetching Patterns
+
+- Use React Query for server state management
+- Implement proper loading and error states
+- Use zodFetch utility for type-safe API calls
+- Handle authentication headers in API requests
+
+## Component Architecture
+
+- Feature-based organization in `src/features/`
+- Shared UI components in `packages/ui/`
+- Use proper TypeScript interfaces for props
+- Implement proper form validation with react-hook-form and Zod
+
+## Incident Management Features
+
+- Implement table with pagination, filtering, and sorting
+- Support filtering by status (Open/Closed) and assignment
+- Allow incident assignment and status updates
+- Use optimistic updates for better UX
+
+## UI/UX Best Practices
+
+- Use shadcn/ui components for consistency
+- Implement responsive design with Tailwind CSS
+- Add proper loading states and error handling
+- Use dialogs/modals for incident creation and editing
+
+## File Structure Example
+
+```
+src/
+├── app/
+│   ├── (public)/
+│   │   └── login/
+│   └── (private)/
+│       └── incidents/
+├── features/
+│   ├── auth/
+│   └── incidents/
+└── components/
+```
+
+description:
+globs:
+alwaysApply: false
+
+---
